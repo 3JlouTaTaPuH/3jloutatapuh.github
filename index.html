@@ -3019,8 +3019,65 @@
             <div class='tn-atom' field='tn_text_175865167944022270'>Анкета</div>
         </div>
         <div class='t396__elem tn-elem tn-elem__1862608111175865167942762840 t-animate' data-elem-id='175865167942762840' data-elem-type='text' data-field-top-value="150" data-field-left-value="318" data-field-height-value="708" data-field-width-value="564" data-field-axisy-value="top" data-field-axisx-value="left" data-field-container-value="grid" data-field-topunits-value="px" data-field-leftunits-value="px" data-field-heightunits-value="px" data-field-widthunits-value="px" data-animate-style="fadeinup" data-animate-duration="1" data-animate-distance="100" data-animate-mobile="y" data-field-top-res-320-value="144" data-field-left-res-320-value="20" data-field-height-res-320-value="718" data-field-width-res-320-value="280" data-field-container-res-320-value="grid">
-            <div class='tn-atom' style="display:flex; justify-content:center;">
-                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdQSTZuqlhNvQCR4k7B-kKDUcSawc8mK8e63QetoXXQEGvW7g/viewform?embedded=true" width="640" height="628" frameborder="0" marginheight="0" marginwidth="0">Загрузка…</iframe>
+            <div class='tn-atom' style="display:flex; justify-content:center; align-items:flex-start;">
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Montserrat:wght@300;400&display=swap');
+                    .wf-wrap { font-family: 'Montserrat', sans-serif; max-width: 420px; width: 100%; }
+                    .wf-card { background: #fdf9f6; border: 0.5px solid #d4b8a8; border-radius: 4px; padding: 2rem; }
+                    .wf-lbl { display: block; font-size: 11px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: #7a5c4a; margin-bottom: 8px; }
+                    .wf-inp { width: 100%; box-sizing: border-box; border: none; border-bottom: 1px solid #c9a990; background: transparent; padding: 8px 0; font-size: 15px; font-family: 'Montserrat', sans-serif; font-weight: 300; color: #3d2314; outline: none; margin-bottom: 1.5rem; }
+                    .wf-inp:focus { border-bottom-color: #3d2314; }
+                    .wf-rg { margin-bottom: 1.5rem; display: flex; gap: 12px; flex-wrap: wrap; }
+                    .wf-rl { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 300; color: #3d2314; cursor: pointer; padding: 8px 16px; border: 0.5px solid #c9a990; border-radius: 50px; transition: all 0.2s; }
+                    .wf-rl input { display: none; }
+                    .wf-rl.sel { background: #3d2314; color: #fdf9f6; border-color: #3d2314; }
+                    .wf-btn { width: 100%; padding: 14px; background: #3d2314; color: #fdf9f6; border: none; border-radius: 50px; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; margin-top: 0.5rem; transition: opacity 0.2s; }
+                    .wf-btn:hover { opacity: 0.85; }
+                    .wf-ok { text-align: center; padding: 2rem; font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: #3d2314; font-style: italic; }
+                    .wf-err { font-size: 11px; color: #c0392b; margin-top: -1rem; margin-bottom: 1rem; }
+                </style>
+                <div class="wf-wrap">
+                    <div class="wf-card" id="wfCard">
+                        <label class="wf-lbl">Имя и фамилия</label>
+                        <input class="wf-inp" id="wfName" type="text" placeholder="Иван Иванов" />
+                        <div class="wf-err" id="wfNameErr" style="display:none">Пожалуйста, введите имя</div>
+                        <label class="wf-lbl">Присутствие</label>
+                       <div class="wf-rg" style="justify-content: space-between;">
+    <label class="wf-rl" id="wfYes" onclick="wfSelect('yes')"><input type="radio" name="attend" /> Да, буду</label>
+    <label class="wf-rl" id="wfNo" onclick="wfSelect('no')"><input type="radio" name="attend" /> К сожалению, нет</label>
+</div>
+                        <div class="wf-err" id="wfAttendErr" style="display:none">Пожалуйста, выберите вариант</div>
+                        <button class="wf-btn" onclick="wfSubmit()">Отправить</button>
+                    </div>
+                </div>
+                <script>
+                    var wfSel = null;
+                    function wfSelect(v) {
+                        wfSel = v;
+                        document.getElementById('wfYes').classList.toggle('sel', v === 'yes');
+                        document.getElementById('wfNo').classList.toggle('sel', v === 'no');
+                        document.getElementById('wfAttendErr').style.display = 'none';
+                    }
+                    async function wfSubmit() {
+                        var name = document.getElementById('wfName').value.trim();
+                        var ok = true;
+                        if (!name) { document.getElementById('wfNameErr').style.display = 'block'; ok = false; } else { document.getElementById('wfNameErr').style.display = 'none'; }
+                        if (!wfSel) { document.getElementById('wfAttendErr').style.display = 'block'; ok = false; }
+                        if (!ok) return;
+                        var btn = document.querySelector('.wf-btn');
+                        btn.textContent = 'Отправляем...';
+                        btn.disabled = true;
+                        var body = new FormData();
+                        body.append('name', name);
+                        body.append('attend', wfSel === 'yes' ? 'Да' : 'К сожалению, нет');
+                        body.append('_subject', 'Анкета — ' + name);
+                        try {
+                            var res = await fetch('https://formspree.io/f/mwvrykzr', { method: 'POST', body: body, headers: { Accept: 'application/json' } });
+                            if (res.ok) { document.getElementById('wfCard').innerHTML = '<div class="wf-ok">Спасибо, мы вас ждём!</div>'; }
+                            else { btn.textContent = 'Попробуйте ещё раз'; btn.disabled = false; }
+                        } catch(e) { btn.textContent = 'Попробуйте ещё раз'; btn.disabled = false; }
+                    }
+                </script>
             </div>
         </div>
     </div>
