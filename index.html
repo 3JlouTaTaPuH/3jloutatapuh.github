@@ -3583,5 +3583,23 @@
                 )(document, window, '157b9db6119a4d62e8e3f52c0cfbd151', 'script', 'https://static.tildacdn.com/js/tilda-stat-1.0.min.js');
             }, 2000);
         </script>
+        <script>
+    function checkScroll() {
+        var elem = document.getElementById('rec1862608131');
+        var rect = elem.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 100) {
+            elem.style.opacity = '1';
+            elem.style.transform = 'translateY(0)';
+        }
+    }
+
+    var elem = document.getElementById('rec1862608131');
+    elem.style.opacity = '0';
+    elem.style.transform = 'translateY(60px)';
+    elem.style.transition = 'opacity 1s ease, transform 1s ease';
+
+    window.addEventListener('scroll', checkScroll);
+    checkScroll();
+</script>
     </body>
 </html>
