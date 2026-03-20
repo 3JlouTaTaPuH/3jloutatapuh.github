@@ -3604,5 +3604,22 @@
     window.addEventListener('scroll', checkScroll);
     checkScroll();
 </script>
+        <script>
+    var el = document.querySelector('[data-elem-id="1743094174954"]');
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(40px)';
+    el.style.transition = 'opacity 0.9s ease, transform 0.9s ease';
+
+    function checkEl() {
+        var rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 80) {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }
+    }
+
+    window.addEventListener('scroll', checkEl);
+    checkEl();
+</script>
     </body>
 </html>
