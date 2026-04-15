@@ -3516,17 +3516,18 @@
         window.addEventListener('scroll', checkEl);
         checkEl();
     });
-</script>
-      <script>
+<script>
     window.addEventListener('load', function() {
         var elements = [
             document.querySelector('[data-elem-id="175865033527469970"]'),
             document.querySelector('[data-elem-id="175865071075198700"]'),
             document.querySelector('[data-elem-id="175864866339190750"]'),
-            document.querySelector('[data-elem-id="175864822984449000"]'),
-            
-            
         ];
+
+        var bottomPhotos = document.querySelectorAll('[data-elem-id="175864822984449000"]');
+        bottomPhotos.forEach(function(el) {
+            elements.push(el);
+        });
 
         elements.forEach(function(el) {
             if (!el) return;
