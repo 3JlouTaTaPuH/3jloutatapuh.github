@@ -3151,7 +3151,8 @@
                                     , 15);
                                 }
 
-                                setTimeout( () => loader(), 3000);
+                               window.addEventListener('load', function() {
+    loader();
                             </script>
                             <style>
                                 #preloader {
