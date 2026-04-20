@@ -3631,5 +3631,64 @@
         checkEls();
     });
 </script>
+        <script>
+    (function() {
+        // Блокируем кнопку-конверт сразу
+        var startBtn = document.querySelector('.abr-startbutton');
+        if (startBtn) {
+            startBtn.style.pointerEvents = 'none';
+            startBtn.style.opacity = '0.5';
+            startBtn.style.cursor = 'not-allowed';
+        }
+
+        function enableButton() {
+            var btn = document.querySelector('.abr-startbutton');
+            if (!btn) return;
+            btn.style.pointerEvents = '';
+            btn.style.opacity = '';
+            btn.style.cursor = 'pointer';
+        }
+
+        // Ждём полной загрузки страницы
+        window.addEventListener('load', function() {
+            // Ждём загрузки всех изображений включая lazy
+            var images = Array.from(document.querySelectorAll('img'));
+            var lazyImages = Array.from(document.querySelectorAll('[data-original]'));
+
+            // Форсируем загрузку lazy-изображений
+            lazyImages.forEach(function(el) {
+                if (el.dataset.original && !el.src) {
+                    el.src = el.dataset.original;
+                }
+            });
+
+            // Ждём шрифты
+            var fontsReady = document.fonts && document.fonts.ready
+                ? document.fonts.ready
+                : Promise.resolve();
+
+            // Ждём все картинки
+            var allImages = Array.from(document.querySelectorAll('img'));
+            var imagePromises = allImages.map(function(img) {
+                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+                return new Promise(function(resolve) {
+                    img.addEventListener('load', resolve, { once: true });
+                    img.addEventListener('error', resolve, { once: true });
+                    // Таймаут на случай зависших картинок
+                    setTimeout(resolve, 5000);
+                });
+            });
+
+            Promise.all([fontsReady].concat(imagePromises)).then(function() {
+                // Небольшая задержка после загрузки всего
+                // чтобы анимации успели отработать
+                setTimeout(enableButton, 800);
+            });
+        });
+
+        // Абсолютный фоллбэк — если что-то пошло не так
+        setTimeout(enableButton, 12000);
+    })();
+</script>
     </body>
 </html>
