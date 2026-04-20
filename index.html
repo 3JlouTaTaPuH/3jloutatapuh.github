@@ -3134,7 +3134,7 @@
  setInterval(updateTimer, 1000);
 </script>
 <script>
-    t_onFuncLoad('t396_initialScale', function() {
+   t_onFuncLoad('t396_initialScale', function() {
         t396_initialScale('1862608131');
     });
     t_onReady(function() {
@@ -3159,6 +3159,7 @@
                                 const preloaderInitialOverflow = document.body.style.overflow;
                                 document.body.style.overflow = 'hidden';
 
+                                const PRELOADER_FALLBACK_MS = 12000;
                                 let preloaderClosed = false;
                                 const closePreloader = () => {
                                     if (preloaderClosed) {
@@ -3183,15 +3184,51 @@
                                     , 350);
                                 };
 
-                                if (document.readyState === 'complete') {
-                                    setTimeout(closePreloader, 0);
-                                } else {
-                                    window.addEventListener('load', closePreloader, {
-                                        once: true
-                                    });
-                                }
+                                const waitForFullReady = async () => {
+                                    if (document.readyState !== 'complete') {
+                                        await new Promise(resolve => window.addEventListener('load', resolve, {
+                                            once: true
+                                        }));
+                                    }
 
-                                setTimeout(closePreloader, 5000);
+                                    if (document.fonts && typeof document.fonts.ready === 'object') {
+                                        try {
+                                            await document.fonts.ready;
+                                        } catch (e) {
+                                        }
+                                    }
+
+                                    const allImages = Array.from(document.querySelectorAll('img'));
+                                    await Promise.allSettled(allImages.map(img => {
+                                        if (img.complete && img.naturalWidth > 0) {
+                                            if (typeof img.decode === 'function') {
+                                                return img.decode().catch( () => {
+                                                });
+                                            }
+                                            return Promise.resolve();
+                                        }
+
+                                        return new Promise(resolve => {
+                                            const done = () => {
+                                                img.removeEventListener('load', done);
+                                                img.removeEventListener('error', done);
+                                                resolve();
+                                            };
+                                            img.addEventListener('load', done, {
+                                                once: true
+                                            });
+                                            img.addEventListener('error', done, {
+                                                once: true
+                                            });
+                                        });
+                                    }
+                                    ));
+
+                                    await new Promise(resolve => requestAnimationFrame( () => requestAnimationFrame(resolve)));
+                                };
+
+                                waitForFullReady().then(closePreloader).catch(closePreloader);
+                                setTimeout(closePreloader, PRELOADER_FALLBACK_MS);
                             </script>
                             <style>
                                 #preloader {
